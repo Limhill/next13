@@ -239,9 +239,15 @@ export const Question = (props: QuestionProps) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+            <>
+              {/* @ts-ignore */}
+              {type === "edit" ? "Editing..." : "Posting..."}
+            </>
           ) : (
-            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
+            <>
+              {/* @ts-ignore */}
+              {type === "edit" ? "Edit Question" : "Ask a Question"}
+            </>
           )}
         </Button>
       </form>
