@@ -13,7 +13,7 @@ interface LocalSearchProps {
 }
 
 export const LocalSearchbar = (props: LocalSearchProps) => {
-  const { route, iconPosition, imgSrc, otherClasses, placeholder } = props;
+  const { iconPosition, imgSrc, otherClasses, placeholder } = props;
 
   return (
     <div
