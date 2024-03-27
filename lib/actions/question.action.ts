@@ -9,22 +9,57 @@ import {
 } from "@/lib/actions/shared.types";
 import { UserModel } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
+import { FilterQuery } from "mongoose";
 
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
-    const questions = await QuestionModel.find({})
-      .populate({
-        path: "tags",
-        model: TagModel,
-      })
-      .populate({ path: "author", model: UserModel })
-      .sort({ createdAt: -1 });
 
-    return { questions };
-  } catch (e) {
-    console.log(e);
-    throw e;
+    const { searchQuery, filter, page = 1, pageSize = 10 } = params;
+
+    // Calculcate the number of posts to skip based on the page number and page size
+    const skipAmount = (page - 1) * pageSize;
+
+    const query: FilterQuery<typeof QuestionModel> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { content: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    let sortOptions = {};
+
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "frequent":
+        sortOptions = { views: -1 };
+        break;
+      case "unanswered":
+        query.answers = { $size: 0 };
+        break;
+      default:
+        break;
+    }
+
+    const questions = await QuestionModel.find(query)
+      .populate({ path: "tags", model: TagModel })
+      .populate({ path: "author", model: UserModel })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .sort(sortOptions);
+
+    const totalQuestions = await QuestionModel.countDocuments(query);
+
+    const isNext = totalQuestions > skipAmount + questions.length;
+
+    return { questions, isNext };
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
 
