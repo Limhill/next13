@@ -12,8 +12,8 @@ export const QuestionsList = async () => {
       {result?.questions?.length > 0 ? (
         result?.questions?.map((question) => (
           <QuestionCard
-            key={question._id}
-            _id={question._id}
+            key={question._id as string}
+            _id={question._id as string}
             title={question.title}
             tags={question.tags}
             author={question.author}
