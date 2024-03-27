@@ -10,7 +10,7 @@ import {
 import { UserModel } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 
-export async function getQuestions() {
+export async function getQuestions(params: GetQuestionsParams) {
   try {
     await connectToDatabase();
     const questions = await QuestionModel.find({})
