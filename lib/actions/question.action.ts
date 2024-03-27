@@ -19,7 +19,8 @@ export async function getQuestions(params: GetQuestionsParams) {
         model: TagModel,
       })
       .populate({ path: "author", model: UserModel })
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
     return { questions };
   } catch (e) {
