@@ -10,9 +10,9 @@ import {
 import { UserModel } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 
-export async function getQuestions(params: GetQuestionsParams) {
+export async function getQuestions() {
   try {
-    connectToDatabase();
+    await connectToDatabase();
     const questions = await QuestionModel.find({})
       .populate({
         path: "tags",
@@ -30,7 +30,7 @@ export async function getQuestions(params: GetQuestionsParams) {
 
 export async function createQuestion(params: CreateQuestionParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { title, content, tags, author, path } = params;
 
