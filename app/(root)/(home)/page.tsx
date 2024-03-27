@@ -6,8 +6,10 @@ import { HomePageFilters } from "@/constants/filters";
 import { HomeFilters } from "@/components/home/HomeFilter";
 import { QuestionsList } from "@/components/home/QuestionsList";
 import { Suspense } from "react";
+import { connectToDatabase } from "@/lib/mongoose";
 
 export default function Home() {
+  connectToDatabase();
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
