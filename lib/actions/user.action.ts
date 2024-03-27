@@ -12,7 +12,7 @@ import { QuestionModel } from "@/database/question.model";
 
 export async function getUserById(params: { userId: string }) {
   try {
-    await connectToDatabase();
+    connectToDatabase();
 
     const { userId } = params;
 
@@ -28,7 +28,7 @@ export async function getUserById(params: { userId: string }) {
 
 export async function createUser(userData: CreateUserParams) {
   try {
-    await connectToDatabase();
+    connectToDatabase();
 
     const newUser = await UserModel.create(userData);
 
@@ -41,7 +41,7 @@ export async function createUser(userData: CreateUserParams) {
 
 export async function updateUser(params: UpdateUserParams) {
   try {
-    await connectToDatabase();
+    connectToDatabase();
 
     const { clerkId, updateData, path } = params;
 
@@ -56,7 +56,7 @@ export async function updateUser(params: UpdateUserParams) {
 
 export async function deleteUser(params: DeleteUserParams) {
   try {
-    await connectToDatabase();
+    connectToDatabase();
 
     const { clerkId } = params;
 
