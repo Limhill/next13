@@ -4,8 +4,8 @@ export default authMiddleware({
   publicRoutes: [
     "/",
     "/api/webhook",
-    "/question/:id",
-    "/tags/",
+    "question/:id",
+    "/tags",
     "/tags/:id",
     "/profile/:id",
     "/community",
@@ -15,8 +15,5 @@ export default authMiddleware({
 });
 
 export const config = {
-  // Protects all routes, including api/trpc.
-  // See https://clerk.com/docs/references/nextjs/auth-middleware
-  // for more information about configuring your Middleware
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.*\\..*|_next).*)", "/", "/(api|trpc)(.*)"],
 };

@@ -15,7 +15,7 @@ export interface IUser extends Document {
   joinedAt: Date;
 }
 
-const UserSchema = new Schema<IUser>({
+const UserSchema = new Schema({
   clerkId: { type: String, required: true },
   name: { type: String, required: true },
   username: { type: String, required: true, unique: true },
@@ -26,8 +26,10 @@ const UserSchema = new Schema<IUser>({
   location: { type: String },
   portfolioWebsite: { type: String },
   reputation: { type: Number, default: 0 },
-  saved: [{ type: Schema.Types.ObjectId, ref: "Question" }], // Example reference to another model
+  saved: [{ type: Schema.Types.ObjectId, ref: "Question" }],
   joinedAt: { type: Date, default: Date.now },
 });
 
-export const UserModel = models.User || model<IUser>("User", UserSchema);
+const User = models.User || model("User", UserSchema);
+
+export default User;

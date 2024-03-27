@@ -1,28 +1,27 @@
 "use server";
 
-import { connectToDatabase } from "@/lib/mongoose";
-import { UserModel } from "@/database/user.model";
+import User from "@/database/user.model";
+import { connectToDatabase } from "../mongoose";
 import {
   CreateUserParams,
   DeleteUserParams,
   UpdateUserParams,
-} from "@/lib/actions/shared.types";
+} from "./shared.types";
 import { revalidatePath } from "next/cache";
-import { QuestionModel } from "@/database/question.model";
+import Question from "@/database/question.model";
 
-export async function getUserById(params: { userId: string }) {
+export async function getUserById(params: any) {
   try {
     connectToDatabase();
 
     const { userId } = params;
 
-    const user = await UserModel.findOne({ clerkId: userId });
+    const user = await User.findOne({ clerkId: userId });
 
     return user;
-  } catch (e) {
-    console.log(e);
-
-    throw e;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
 
@@ -30,12 +29,12 @@ export async function createUser(userData: CreateUserParams) {
   try {
     connectToDatabase();
 
-    const newUser = await UserModel.create(userData);
+    const newUser = await User.create(userData);
 
     return newUser;
-  } catch (e) {
-    console.log(e);
-    throw e;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
 
@@ -45,12 +44,14 @@ export async function updateUser(params: UpdateUserParams) {
 
     const { clerkId, updateData, path } = params;
 
-    await UserModel.findOneAndUpdate({ clerkId }, updateData, { new: true });
+    await User.findOneAndUpdate({ clerkId }, updateData, {
+      new: true,
+    });
 
     revalidatePath(path);
-  } catch (e) {
-    console.log(e);
-    throw e;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
 
@@ -60,24 +61,28 @@ export async function deleteUser(params: DeleteUserParams) {
 
     const { clerkId } = params;
 
-    const user = await UserModel.findOneAndDelete({ clerkId });
+    const user = await User.findOneAndDelete({ clerkId });
 
     if (!user) {
       throw new Error("User not found");
     }
 
-    // eslint-disable-next-line no-unused-vars
-    const userQuestionIds = await QuestionModel.find({
-      author: user._id,
-    }).distinct("_id");
+    // Delete user from database
+    // and questions, answers, comments, etc.
 
-    await QuestionModel.deleteMany({ author: user._id });
+    // get user question ids
+    // const userQuestionIds = await Question.find({ author: user._id}).distinct('_id');
 
-    const deletedUser = await UserModel.findOneAndDelete({ clerkId });
+    // delete user questions
+    await Question.deleteMany({ author: user._id });
+
+    // TODO: delete user answers, comments, etc.
+
+    const deletedUser = await User.findByIdAndDelete(user._id);
 
     return deletedUser;
-  } catch (e) {
-    console.log(e);
-    throw e;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }

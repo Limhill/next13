@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { useTheme } from "@/context/ThemeProvider";
 import {
   Menubar,
@@ -9,7 +10,6 @@ import {
   MenubarMenu,
   MenubarTrigger,
 } from "@/components/ui/menubar";
-import Image from "next/image";
 import { themes } from "@/constants";
 
 const Theme = () => {
@@ -21,7 +21,7 @@ const Theme = () => {
           {mode === "light" ? (
             <Image
               src="/assets/icons/sun.svg"
-              alt="Sun icon"
+              alt="sun"
               width={20}
               height={20}
               className="active-theme"
@@ -29,7 +29,7 @@ const Theme = () => {
           ) : (
             <Image
               src="/assets/icons/moon.svg"
-              alt="Moon icon"
+              alt="moon"
               width={20}
               height={20}
               className="active-theme"
@@ -59,7 +59,11 @@ const Theme = () => {
                 className={`${mode === item.value && "active-theme"}`}
               />
               <p
-                className={`body-semibold text-light-500 ${mode === item.value ? "text-primary-500" : "text-dark100_light900"}`}
+                className={`body-semibold text-light-500 ${
+                  mode === item.value
+                    ? "text-primary-500"
+                    : "text-dark100_light900"
+                }`}
               >
                 {item.label}
               </p>

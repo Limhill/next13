@@ -1,9 +1,9 @@
-import { ClerkProvider } from "@clerk/nextjs";
+/* eslint-disable camelcase */
 import "./globals.css";
-import { ReactNode } from "react";
-// eslint-disable-next-line camelcase
-import { Inter, Space_Grotesk } from "next/font/google";
 import type { Metadata } from "next";
+import { Inter, Space_Grotesk } from "next/font/google";
+import React from "react";
+import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/context/ThemeProvider";
 
 const inter = Inter({
@@ -15,20 +15,23 @@ const inter = Inter({
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-space-grotesk",
+  variable: "--font-spaceGrotesk",
 });
 
 export const metadata: Metadata = {
   title: "DevFlow",
-  description: `A community-driven platform for asking and answering questions. 
-  Get help, share knowledge, and collaborate with developers from around the world. Explore topics in web development, 
-  mobile app development, algorithms, data structures, and more.`,
+  description:
+    "A community-driven platform for asking and answering programming questions.Get help,share knowlege,and collaborate with developers from around the world.Explore topics in web development,mobile app development, algorithms, data structures, and more.",
+
   icons: {
     icon: "/assets/images/site-logo.svg",
   },
 };
-
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={`${inter.variable} ${spaceGrotesk.variable}`}>
@@ -36,7 +39,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           appearance={{
             elements: {
               formButtonPrimary: "primary-gradient",
-              footerActionLink: "primary-text-gradient hover:text-primary-500",
+              footerActionLink:
+                "primary-text-gradient  hover : text-primary-500",
             },
           }}
         >

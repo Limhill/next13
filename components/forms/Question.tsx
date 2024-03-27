@@ -1,9 +1,9 @@
 "use client";
-
-import { z } from "zod";
+import React, { useRef, useState } from "react";
+import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,27 +14,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Button } from "../ui/button";
 import { QuestionsSchema } from "@/lib/validations";
-import React, { useRef, KeyboardEvent, useState } from "react";
-import { Editor } from "@tinymce/tinymce-react";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
 
-interface QuestionProps {
+const type: any = "create";
+
+interface Props {
   mongoUserId: string;
 }
 
-const type: "create" | "edit" = "create";
-
-export const Question = (props: QuestionProps) => {
-  const { mongoUserId } = props;
+const Question = ({ mongoUserId }: Props) => {
   const editorRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
@@ -45,13 +44,13 @@ export const Question = (props: QuestionProps) => {
   });
 
   // 2. Define a submit handler.
-  const onSubmit = async (values: z.infer<typeof QuestionsSchema>) => {
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
 
     try {
-      // make an async call to our API => create a question
+      // make an async call to your API -> create a question
       // contain all form data
-      // navigate to home page
+
       await createQuestion({
         title: values.title,
         content: values.explanation,
@@ -60,16 +59,17 @@ export const Question = (props: QuestionProps) => {
         path: pathname,
       });
 
+      // navigate to home page
       router.push("/");
-    } catch (e) {
+    } catch (error) {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   const handleInputKeyDown = (
-    e: KeyboardEvent<HTMLInputElement>,
-    field: any,
+    e: React.KeyboardEvent<HTMLInputElement>,
+    field: any
   ) => {
     if (e.key === "Enter" && field.name === "tags") {
       e.preventDefault();
@@ -77,27 +77,28 @@ export const Question = (props: QuestionProps) => {
       const tagInput = e.target as HTMLInputElement;
       const tagValue = tagInput.value.trim();
 
-      if (!tagValue) {
+      if (tagValue !== "") {
+        if (tagValue.length > 15) {
+          return form.setError("tags", {
+            type: "required",
+            message: "Tag must be less than 15 characters.",
+          });
+        }
+
+        if (!field.value.includes(tagValue as never)) {
+          form.setValue("tags", [...field.value, tagValue]);
+          tagInput.value = "";
+          form.clearErrors("tags");
+        }
+      } else {
         form.trigger();
-      }
-
-      if (tagValue.length > 15) {
-        return form.setError("tags", {
-          type: "required",
-          message: "Tag must be less than 15 characters.",
-        });
-      }
-
-      if (!field.value.includes(tagValue as never)) {
-        form.setValue("tags", [...field.value, tagValue]);
-        tagInput.value = "";
-        form.clearErrors("tags");
       }
     }
   };
 
   const handleTagRemove = (tag: string, field: any) => {
     const newTags = field.value.filter((t: string) => t !== tag);
+
     form.setValue("tags", newTags);
   };
 
@@ -117,8 +118,7 @@ export const Question = (props: QuestionProps) => {
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
-                  className="no-focus paragraph-regular background-light900_dark300 light-border-2
-                  text-dark300_light700 min-h-[56px] border"
+                  className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                   {...field}
                 />
               </FormControl>
@@ -144,11 +144,11 @@ export const Question = (props: QuestionProps) => {
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY}
                   onInit={(evt, editor) => {
                     // @ts-ignore
-                    return (editorRef.current = editor);
+                    editorRef.current = editor;
                   }}
-                  initialValue=""
                   onBlur={field.onBlur}
                   onEditorChange={(content) => field.onChange(content)}
+                  initialValue=""
                   init={{
                     height: 350,
                     menubar: false,
@@ -191,13 +191,12 @@ export const Question = (props: QuestionProps) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Question Title <span className="text-primary-500">*</span>
+                Tags <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <>
                   <Input
-                    className="no-focus paragraph-regular background-light900_dark300 light-border-2
-                  text-dark300_light700 min-h-[56px] border"
+                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     placeholder="Add tags..."
                     onKeyDown={(e) => handleInputKeyDown(e, field)}
                   />
@@ -207,8 +206,7 @@ export const Question = (props: QuestionProps) => {
                       {field.value.map((tag: any) => (
                         <Badge
                           key={tag}
-                          className="subtle-medium background-light800_dark300 text-light400_dark500 flex items-center
-                         justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
+                          className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
                           onClick={() => handleTagRemove(tag, field)}
                         >
                           {tag}
@@ -239,18 +237,14 @@ export const Question = (props: QuestionProps) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>
-              {/* @ts-ignore */}
-              {type === "edit" ? "Editing..." : "Posting..."}
-            </>
+            <>{type === "edit" ? "Editing..." : "Posting..."}</>
           ) : (
-            <>
-              {/* @ts-ignore */}
-              {type === "edit" ? "Edit Question" : "Ask a Question"}
-            </>
+            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
           )}
         </Button>
       </form>
     </Form>
   );
 };
+
+export default Question;
