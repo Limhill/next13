@@ -5,11 +5,12 @@ import { getQuestions } from "@/lib/actions/question.action";
 
 export const QuestionsList = async () => {
   const result = await getQuestions({});
+  console.log(result);
 
   return (
     <>
-      {result.questions.length > 0 ? (
-        result.questions.map((question) => (
+      {result?.questions?.length > 0 ? (
+        result?.questions?.map((question) => (
           <QuestionCard
             key={question._id}
             _id={question._id}
