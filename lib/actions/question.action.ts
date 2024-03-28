@@ -1,10 +1,10 @@
 "use server";
 
-import Question from "@/database/question.model";
+import { Question } from "@/database/question.model";
 import Tag from "@/database/tag.model";
 import { connectToDatabase } from "../mongoose";
 import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
-import User from "@/database/user.model";
+import { User } from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 
 export async function getQuestions(params: GetQuestionsParams) {
@@ -43,7 +43,7 @@ export async function createQuestion(params: CreateQuestionParams) {
       const existingTag = await Tag.findOneAndUpdate(
         { name: { $regex: new RegExp(`^${tag}$`, "i") } },
         { $setOnInsert: { name: tag }, $push: { question: question._id } },
-        { upsert: true, new: true }
+        { upsert: true, new: true },
       );
 
       tagDocuments.push(existingTag._id);

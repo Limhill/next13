@@ -18,7 +18,7 @@ interface Props {
   containerclasses?: string;
 }
 
-const Filter = ({ filters, otherClasses, containerclasses }: Props) => {
+export const Filter = ({ filters, otherClasses, containerclasses }: Props) => {
   return (
     <div className={`relative ${containerclasses}`}>
       <Select>
@@ -42,5 +42,3 @@ const Filter = ({ filters, otherClasses, containerclasses }: Props) => {
     </div>
   );
 };
-
-export default Filter;
