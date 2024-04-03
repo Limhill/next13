@@ -30,4 +30,4 @@ const UserSchema = new Schema<IUser>({
   joinedAt: { type: Date, default: Date.now },
 });
 
-export const User = models.User || model("User", UserSchema);
+export const User = models.User || model<IUser>("User", UserSchema);

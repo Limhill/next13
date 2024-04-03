@@ -23,4 +23,5 @@ const QuestionSchema = new Schema<IQuestion>({
   createdAt: { type: Date, default: Date.now },
 });
 
-export const Question = models.Question || model("Question", QuestionSchema);
+export const Question =
+  models.Question || model<IQuestion>("Question", QuestionSchema);
