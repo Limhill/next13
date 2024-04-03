@@ -18,4 +18,5 @@ const AnswerSchema = new Schema<IAnswer>({
   createdAt: { type: Date, default: Date.now },
 });
 
-export const Answer = models.Answer || model<IAnswer>("Answer", AnswerSchema);
+export const AnswerModel =
+  models.Answer || model<IAnswer>("Answer", AnswerSchema);

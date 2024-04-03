@@ -2,7 +2,7 @@
 
 import { CreateAnswerParams } from "@/lib/actions/shared.types";
 import { connectToDatabase } from "@/lib/mongoose";
-import { Answer } from "@/database/answer.model";
+import { AnswerModel } from "@/database/answer.model";
 import { Question } from "@/database/question.model";
 import { revalidatePath } from "next/cache";
 
@@ -12,7 +12,7 @@ export async function createAnswer(params: CreateAnswerParams) {
 
     const { content, author, question, path } = params;
 
-    const newAnswer = new Answer({ content, author, question });
+    const newAnswer = new AnswerModel({ content, author, question });
 
     // Add the answer to the question's answers array
     await Question.findByIdAndUpdate(question, {
